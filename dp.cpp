@@ -15,6 +15,7 @@ struct answer{
   std::string command;
 };//解とそれを実現する命令
 
+
 std::string itocom (int st,int n,int buy,int sell){
   std::string stock = "";
   if (n==0)return stock;
@@ -25,9 +26,34 @@ std::string itocom (int st,int n,int buy,int sell){
   return ans;
 }
 
+answer convolutional_gready(int S,int T,int cp,int N,std::vector conv){
+  //(e.g.) conv(2) = [1,2]
+  answer = ans;
+  if (N = 1){
+    std::vector<answer> ans(T-S+1);
+    ans[0].value = cp;
+    ans[0].value = "":
+    for (int t=0;t<T-S;t++){
+      answer ans[t+1] = ans[t];
+      for (int i=0;i<t-10;i++){
+        if (single_gready(i+S,t+S,ans[i].value,conv[0])>ans[t+1].value){
+          ans[t+1].value = single_gready(i+S,t+S,ans[i].value,conv[0]).value;
+          ans[t+1].value = ans[i].command+ single_gready(i+S,t+S,ans[i].value,conv[0]).command;
+        }
+      }
+    }
+    return ans[T-S];
+  }
+  if (N==2){
+    std::vector<answer>dp(T-S);
 
-answer gready(int S,int T,int cp){
-  //制約付きナップザザック
+  }
+  else{
+
+  }
+
+
+
   answer ans;
   std::vector<int> a(3);
   std::vector<int> n(3);
@@ -72,35 +98,18 @@ answer gready(int S,int T,int cp){
   }while(next_permutation(v.begin(),v.end()));
   best += cp;
   ans.command = "";
-  for (int k=0;k<3;k++){
-    ans.command += itocom(k,n[k],s[k],t[k]);
+  if (n[0]>0){
+    ans.command += "buy(A," + toS(s[0],n[0]) + ");"+"sell(A," + toS(t[0],n[0]) + ");";
+  }
+  if (n[1]>0){
+    ans.command += "buy(B," + toS(s[1],n[1]) + ");"+"sell(B," + toS(t[1],n[1]) + ");";
+  }
+  if (n[2]>0){
+    ans.command += "buy(C," + toS(s[2],n[2]) + ");"+"sell(C," + toS(t[2],n[2]) + ");";
   }
   ans.value = best;
   return ans;
 }
-answer separate_gready(int S,int T,int st){
-  //制約付きナップザザック
-  answer ans;
-  int a = (data[st][T]-data[st][S]);
-  int n;
-  int s=S;
-  int t=T;
-  for (int i = S+1;i<T-9;i++){
-    for (int j = i+10;j<=T;j++){
-      if (a<data[st][j]-data[st][i]){
-        a =data[st][j]-data[st][i];
-        s =i;
-        t =j;
-      }
-    }
-  }
-  ans.value = M*a;
-  ans.command = itocom(st,M,s,t);
-  return ans;
-}
-
-
-
 
 int main(){
   answer ans[320];
@@ -111,15 +120,10 @@ int main(){
     }else{
       ans[t] = ans[t-1];
       for (int i = 0;i<t-9;i++){
-        if (ans[i].value<M*data[0][i]+M*data[1][i]+M*data[2][i]){
-          answer ans_i_t = gready(i,t,ans[i].value);
-          if (ans_i_t.value>ans[t].value){
-            ans[t].value = ans_i_t.value;
-            ans[t].command = ans[i].command + ans_i_t.command;
-          }
-        }
-        else{
-          
+        answer ans_i_t = gready(i,t,ans[i].value);
+        if (ans_i_t.value>ans[t].value){
+          ans[t].value = ans_i_t.value;
+          ans[t].command = ans[i].command + ans_i_t.command;
         }
       }
       //std::cout <<t << std::endl;
@@ -127,18 +131,3 @@ int main(){
   }
   std::cout << ans[319].command;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
