@@ -10,10 +10,6 @@
 extern int data[3][320];
 
 #define  M  10000
-struct answer{
-  int value;
-  std::string command;
-};//解とそれを実現する命令
 
 
 std::string itocom (int st,int n,int buy,int sell){
@@ -26,108 +22,86 @@ std::string itocom (int st,int n,int buy,int sell){
   return ans;
 }
 
-answer convolutional_gready(int S,int T,int cp,int N,std::vector conv){
-  //(e.g.) conv(2) = [1,2]
-  answer = ans;
-  if (N = 1){
-    std::vector<answer> ans(T-S+1);
-    ans[0].value = cp;
-    ans[0].value = "":
-    for (int t=0;t<T-S;t++){
-      answer ans[t+1] = ans[t];
-      for (int i=0;i<t-10;i++){
-        if (single_gready(i+S,t+S,ans[i].value,conv[0])>ans[t+1].value){
-          ans[t+1].value = single_gready(i+S,t+S,ans[i].value,conv[0]).value;
-          ans[t+1].value = ans[i].command+ single_gready(i+S,t+S,ans[i].value,conv[0]).command;
-        }
-      }
-    }
-    return ans[T-S];
-  }
-  if (N==2){
-    std::vector<answer>dp(T-S);
+struct answer{
+  int value;
+  int stock [3];
+  int buyT [3];
+  std::string command;
+};//解とそれを実現する命令
 
-  }
-  else{
-
-  }
-
-
-
-  answer ans;
-  std::vector<int> a(3);
-  std::vector<int> n(3);
+void copy_answer(answer* a,answer* b){
+  (*b).value = (*a).value;
+  (*b).command = (*a).command;
   for (int i=0;i<3;i++){
-    a[i] = (data[i][T]-data[i][S]);
-    n[i] = 0;
+    (*b).stock[i]=(*a).stock[i];
+    (*b).buyT[i]=(*a).buyT[i];
   }
-  std::vector<int>s(3);
-  std::vector<int>t(3);
+}
+
+
+
+int total_value(answer a,int t){
+  int ans = a.value;
   for(int i=0;i<3;i++){
-    s[i]=S;t[i]=T;
+    ans += a.stock[i] * data[i][t];
   }
-  for (int i = S+1;i<T-9;i++){
-    for (int j = i+10;j<=T;j++){
-      for (int k=0;k<3;k++){
-        if ((double)a[k]/(double)data[k][s[k]]<(double)(data[k][j]-data[k][i])/(double)data[k][i]){
-          a[k] =data[k][j]-data[k][i];
-          s[k] =i;
-          t[k] =j;
-        }
-      }
-    }
-  }
-  int best = 0;
-  std::vector<int> v(3);for(int i=0;i<3;i++)v[i]=i;
-  do{
-    int score = 0;
-    int lest_cp=cp;
-    for (int i=0;i<3;i++){
-      if (a[v[i]]>0)
-      score += a[v[i]]*min(M,lest_cp/data[v[i]][s[v[i]]]);
-      lest_cp -= min(M,lest_cp/data[v[i]][s[v[i]]])*data[v[i]][s[v[i]]];
-    }
-    if (best<score){
-      lest_cp=cp;
-      for(int i=0;i<3;i++){
-        n[v[i]] =(a[v[i]]>0)*min(M,lest_cp/data[v[i]][s[v[i]]]);
-        lest_cp -=n[v[i]]*data[v[i]][s[v[i]]];
-      }
-      best = score;
-    }
-  }while(next_permutation(v.begin(),v.end()));
-  best += cp;
-  ans.command = "";
-  if (n[0]>0){
-    ans.command += "buy(A," + toS(s[0],n[0]) + ");"+"sell(A," + toS(t[0],n[0]) + ");";
-  }
-  if (n[1]>0){
-    ans.command += "buy(B," + toS(s[1],n[1]) + ");"+"sell(B," + toS(t[1],n[1]) + ");";
-  }
-  if (n[2]>0){
-    ans.command += "buy(C," + toS(s[2],n[2]) + ");"+"sell(C," + toS(t[2],n[2]) + ");";
-  }
-  ans.value = best;
   return ans;
 }
+
+
 
 int main(){
   answer ans[320];
   ans[0].value=10000;
-  for (int t = 0;t<320;t++){
-    if (t<10){
-      ans[t].value = 10000;
+  std::fill(ans[0].stock,ans[0].stock+3,0);
+  std::fill(ans[0].buyT,ans[0].buyT+3,0);
+  for (int T = 0;T<320;T++){
+    if (T<10){
+      ans[T].value=10000;
+      std::fill(ans[T].stock,ans[T].stock+3,0);
+      std::fill(ans[T].buyT,ans[T].buyT+3,0);
     }else{
-      ans[t] = ans[t-1];
-      for (int i = 0;i<t-9;i++){
-        answer ans_i_t = gready(i,t,ans[i].value);
-        if (ans_i_t.value>ans[t].value){
-          ans[t].value = ans_i_t.value;
-          ans[t].command = ans[i].command + ans_i_t.command;
+      copy_answer(&ans[T-1],&ans[T]);
+      for (int t=0;t<T;t++){
+        std::vector<int> dif(3);
+        for(int i=0;i<3;i++){
+          dif[i] = data[i][T]-data[i][t];
         }
+        int temp_total = total_value(ans[t],T);
+        int temp_value = ans[t].value;
+        for(int i=0;i<3;i++){
+          if(dif[i]<0&&ans[t].buyT[i]<t-9){
+            temp_value += (ans[t]).stock[i]*data[i][t];
+            temp_total += (ans[t]).stock[i]*dif[i];
+          }
+        }
+        if(total_value(ans[T],T)< )
+
+
+
+
       }
-      //std::cout <<t << std::endl;
+
     }
   }
   std::cout << ans[319].command;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
