@@ -3,6 +3,7 @@
 #include <string>
 #include <algorithm>
 #define min(a,b) ((a<b)?a:b)
+#define max(a,b) ((a>b)?a:b)
 
 //コードの短縮のため、マクロを使わせていただきます。
 #define toS(x,y) std::to_string(x)+","+std::to_string(y)
@@ -76,8 +77,37 @@ answer gready(int S,int T,int cp){
   ans.value = best;
   return ans;
 }
+std::string iTostock(int i){
+  if (i==0)return "A";
+  if (i==1)return "B";
+  return "C";
+}
 
-
+answer isorate_gready(int S,int T,int cp){
+  //制約付きナップザザック
+  answer ans;
+  std::vector<std::vector<answer>>dp(3,std::vector<answer>(T-S+1));
+  dp[0][0].value = cp;
+  dp[1][0].value = cp;
+  dp[2][0].value = cp;
+  std::string temp;
+  for(int i = 0;i<3;i++){
+    for(int s = 1;s+S<=T;s++){
+       dp[i][s]=dp[i][s-1];
+       if(s>9){
+         for(int ss=0;ss<s-9;ss++){
+           if(dp[i][ss].value+(data[i][s+S]-data[i][ss+S])*M > dp[i][s].value){
+             dp[i][s].value = dp[i][ss].value + (data[i][s+S]-data[i][ss+S])*M; 
+             dp[i][s].command = dp[i][ss].command + "buy("+iTostock(i)+","+std::to_string(S+ss)+");"+ "sell("+iTostock(i)+","+std::to_string(S+s)+");";
+           }
+         }
+       }
+    }
+  }
+  ans.value = dp[0][T-S].value+ dp[1][T-S].value+ dp[2][T-S].value -cp-cp;
+  ans.command = dp[0][T-S].command+ dp[1][T-S].command+ dp[2][T-S].command;
+  return ans;
+}
 
 int main(){
   answer ans[320];
@@ -88,7 +118,12 @@ int main(){
     }else{
       ans[t] = ans[t-1];
       for (int i = 0;i<t-9;i++){
-        answer ans_i_t = gready(i,t,ans[i].value);
+        answer ans_i_t;
+        if(ans[i].value>M*(data[0][i]+data[1][i]+data[2][i])){
+           ans_i_t = isorate_gready(i,t,ans[i].value);
+        }else{
+          ans_i_t = gready(i,t,ans[i].value);
+        }
         if (ans_i_t.value>ans[t].value){
           ans[t].value = ans_i_t.value;
           ans[t].command = ans[i].command + ans_i_t.command;
@@ -97,5 +132,6 @@ int main(){
       //std::cout <<t << std::endl;
     }
   }
-  std::cout << ans[319].command;  
+  std::cout << ans[319].command << std::endl;;  
+  std::cout << ans[319].value;
 }
