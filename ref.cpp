@@ -16,7 +16,7 @@ struct answer{
   std::string command;
 };//解とそれを実現する命令
 
-answer gready(int S,int T,int cp){
+answer gready(int S,int T,int cp,bool w){
   //制約付きナップザザック
   answer ans;
   std::vector<int> a(3);
@@ -33,6 +33,7 @@ answer gready(int S,int T,int cp){
   for (int i = S+1;i<T-9;i++){
     for (int j = i+10;j<=T;j++){
       for (int k=0;k<3;k++){
+        //if (a[k]/data[k][s[k]]<(data[k][j]-data[k][i])/data[k][i]){
         if (a[k]<data[k][j]-data[k][i]){
           a[k] =data[k][j]-data[k][i];
           s[k] =i;
@@ -42,6 +43,8 @@ answer gready(int S,int T,int cp){
     }
   }
   int best = 0;
+  
+  if (!w){
   std::vector<int> v(3);for(int i=0;i<3;i++)v[i]=i;
   do{
     int score = 0;
@@ -60,9 +63,23 @@ answer gready(int S,int T,int cp){
       best = score;
     }
   }while(next_permutation(v.begin(),v.end()));
+  }
+  
+  if(w){
+  for (int i=0;i<=(a[0]>0)*min(M,cp/data[0][s[0]]);i++){
+    int cp2 = cp - i*data[0][s[0]];
+    for (int j=0;j<=(a[1]>0)*min(M,cp2/data[1][s[1]]);j++){
+      int cp3 = cp2 -j*data[1][s[1]];
+      int k = (a[2]>0)*min(M,cp3/data[2][s[2]]);
+      int score = a[0]*i + a[1]*j + a[2]*k;
+      if (score>best){
+        n[0]=i;n[1]=j;n[2]=k;
+        best = score;
+      }
+    }
+  }
+  }
 
-  //解周辺の探索
-  //int argMax = std::distance(n.begin(),std::max_element(n.begin(),n.begin()));
   best += cp;
   ans.command = "";
   if (n[0]>0){
@@ -84,7 +101,6 @@ std::string iTostock(int i){
 }
 
 answer isorate_gready(int S,int T,int cp){
-  //制約付きナップザザック
   answer ans;
   std::vector<std::vector<answer>>dp(3,std::vector<answer>(T-S+1));
   dp[0][0].value = cp;
@@ -122,7 +138,7 @@ int main(){
         if(ans[i].value>M*(data[0][i]+data[1][i]+data[2][i])){
            ans_i_t = isorate_gready(i,t,ans[i].value);
         }else{
-          ans_i_t = gready(i,t,ans[i].value);
+          ans_i_t = gready(i,t,ans[i].value,(i<0));
         }
         if (ans_i_t.value>ans[t].value){
           ans[t].value = ans_i_t.value;
@@ -133,5 +149,5 @@ int main(){
     }
   }
   std::cout << ans[319].command << std::endl;;  
-  std::cout << ans[319].value;
+  std::cout << ans[319].value << std::endl;
 }
