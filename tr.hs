@@ -8,7 +8,7 @@ main = do
   let n = 320
   b <- getMat n
   let c = subMatrix (0,1) (n,3)$fromRows (map (fromList . map toEnum) b)::Matrix R
-  saveMatrix "tr.csv" "%.0f," (tr c)
+  saveMatrix "tr.csv" "%.0f" (tr c)
 
 
 getInts = do

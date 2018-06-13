@@ -8,7 +8,7 @@
 //コードの短縮のため、マクロを使わせていただきます。
 #define toS(x,y) std::to_string(x)+","+std::to_string(y)
 
-extern int data[3][320];
+int data[3][320];
 
 #define  M  10000
 struct answer{
@@ -126,6 +126,11 @@ answer isorate_gready(int S,int T,int cp){
 }
 
 int main(){
+  for (int j=0;j<3;j++){
+    for (int i=0;i<320;i++){
+        std::cin >> data[j][i];
+    }
+  }
   answer ans[320];
   ans[0].value=10000;
   for (int t = 0;t<320;t++){
@@ -148,6 +153,6 @@ int main(){
       //std::cout <<t << std::endl;
     }
   }
-  std::cout << ans[319].command << std::endl;;  
+  //std::cout << ans[319].command << std::endl;;  
   std::cout << ans[319].value << std::endl;
 }
