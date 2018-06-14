@@ -14,58 +14,55 @@ def exc():
 
 def inNum(A):
     if A == 1 or  A == 0:
-        n = 1;
+        m = 1;
     else:
-        n= int(np.log(A-1)) 
-    for i in range(n+4):
+        m= int(np.log(A-1)) 
+    for i in range(m+4):
         pg.keyDown("backspace")
         pg.keyUp("backspace")
     for s in (str(A)):
         pg.keyDown(s)
-        pg.keyUp(s)        
-    pg.keyDown("esc")
-    pg.keyUp("esc")
+        pg.keyUp(s)
 
 
-
+n = 1611
+best = 711
+best_seed = 260375386
 
 pg.moveTo(1670,855)
 pg.click()
-pg.keyDown("j")
-time.sleep(2)
-pg.keyUp("j")
 
 
-n = 70
-best = 235403557
-best_seed = 8
-while(True):
+while (True):
+    time.sleep(0.1)
+    pg.moveTo(1908,440)
+    time.sleep(0.1)
+    pg.mouseDown()
+    time.sleep(0.1)
+    pg.moveTo(1908,600)
+    pg.mouseUp()
 
-    pg.keyDown("i")
-    pg.keyUp("i")
-    pg.keyDown("c")
-    pg.keyUp("c")
+    time.sleep(0.1)
+    pg.moveTo(1315,610)
+    pg.click()
 
-    inNum(n)
- 
-    pg.keyDown("i")
-    pg.keyUp("i")
-    pg.keyDown("d")
-    pg.keyUp("d")  
-    time.sleep(1)
+    time.sleep(0.1)
+    pg.moveTo(1908,611)
+    time.sleep(0.1)
+    pg.mouseDown()
+    time.sleep(0.1)
+    pg.moveTo(1908,823)
+    pg.mouseUp()
 
-    pg.keyDown("j")
-    time.sleep(1)
-    pg.keyUp("j")
-    pg.keyDown("i")
-    pg.keyUp("i")
-    pg.keyDown("s")
-    pg.keyUp("s")
+    time.sleep(0.1)
+    pg.moveTo(1196,801)
+    pg.click()
+    #数字入力
+    inNum(n+1)
 
-    pg.keyDown("j")
-    time.sleep(1)
-    pg.keyUp("j")
-
+    time.sleep(0.1)
+    pg.moveTo(1311,801)
+    pg.click()
     temp = exc()    
     if temp>best:
         best=temp
